@@ -1,0 +1,30 @@
+﻿@model VelureShop.Models.Category
+@{
+    ViewBag.Title = "Edit Category";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="bg-white rounded p-4" style="max-width:480px;">
+    @using (Html.BeginForm("Edit", "AdminCategory", FormMethod.Post))
+    {
+        @Html.AntiForgeryToken()
+        @Html.HiddenFor(m => m.CategoryID)
+
+        <div class="mb-3">
+            <label class="form-label">Category Name</label>
+            @Html.TextBoxFor(m => m.Name, new { @class = "form-control", required = "required" })
+        </div>
+
+<div class="mb-4">
+            <label class="form-label">Gender</label>
+            @Html.DropDownListFor(m => m.Gender, new List<SelectListItem>
+       {
+           new SelectListItem { Text = "Women", Value = "Women" },
+           new SelectListItem { Text = "Men", Value = "Men" }
+       }, new { @class = "form-control" })
+        </div>
+
+        <button type="submit" class="btn btn-dark">UPDATE CATEGORY</button>
+        <a href="@Url.Action("Index")" class="btn btn-outline-secondary ms-2">Cancel</a>
+    }
+</div>

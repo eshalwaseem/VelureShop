@@ -1,0 +1,16 @@
+﻿@model VelureShop.Models.Product
+@{
+    ViewBag.Title = "Deactivate Product";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="bg-white rounded p-4" style="max-width:560px;">
+    <p>Are you sure you want to deactivate <strong>@Model.Name</strong>? It will no longer appear in the store, but order history will be preserved.</p>
+    @using (Html.BeginForm("Delete", "AdminProduct", FormMethod.Post))
+    {
+        @Html.AntiForgeryToken()
+        @Html.HiddenFor(m => m.ProductID)
+        <button type="submit" class="btn btn-danger">DEACTIVATE</button>
+        <a href="@Url.Action("Index")" class="btn btn-outline-secondary ms-2">Cancel</a>
+    }
+</div>

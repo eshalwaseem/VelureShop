@@ -1,0 +1,79 @@
+﻿@model VelureShop.Models.ViewModels.ShopListViewModel
+@{
+    ViewBag.Title = "Shop" + Model.Gender;
+}
+<div class="container mt-4 mb-5">
+    <div class="text-muted mb-2" style="font-size:14px;">
+        <a href="@Url.Action("Index", "Home")">Home</a> / <strong>@Model.Gender</strong>
+    </div>
+    <h1 class="fw-bold mb-4">Shop @Model.Gender</h1>
+    <div class="row">
+        <div class="col-md-3 filter-sidebar mb-4">
+            <h6>Categories</h6>
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="categoryFilter" id="catAll"
+                       @(Model.SelectedCategoryID == null ? "checked" : "")
+                       onclick="location.href='@Url.Action(Model.Gender, "Shop", new { sort = Model.SortBy })'" />
+                <label class="form-check-label" for="catAll">All</label>
+            </div>
+            @foreach (var cat in Model.Categories)
+            {
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="categoryFilter" id="cat@(cat.CategoryID)"
+                           @(Model.SelectedCategoryID == cat.CategoryID ? "checked" : "")
+                           onclick="location.href='@Url.Action(Model.Gender, "Shop", new { categoryId = cat.CategoryID, sort = Model.SortBy })'" />
+                    <label class="form-check-label" for="cat@(cat.CategoryID)">
+                        @cat.Name
+                        <span class="filter-count">@cat.Products.Count(p => p.IsActive)</span>
+                    </label>
+                </div>
+            }
+            
+            <hr class="my-4" />
+            <a href="@Url.Action(Model.Gender, "Shop")" class="text-decoration-underline" style="font-size:14px;">Clear all filters</a>
+        </div>
+        <div class="col-md-9">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <span class="text-muted">Showing @Model.Products.Count of @Model.TotalCount results</span>
+                <div class="dropdown">
+                    <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                        Sort by: @(Model.SortBy == "price_asc" ? "Price: Low to High" : Model.SortBy == "price_desc" ? "Price: High to Low" : "Newest First")
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li><a class="dropdown-item" href="@Url.Action(Model.Gender, "Shop", new { categoryId = Model.SelectedCategoryID, sort = "newest" })">Newest First</a></li>
+                        <li><a class="dropdown-item" href="@Url.Action(Model.Gender, "Shop", new { categoryId = Model.SelectedCategoryID, sort = "price_asc" })">Price: Low to High</a></li>
+                        <li><a class="dropdown-item" href="@Url.Action(Model.Gender, "Shop", new { categoryId = Model.SelectedCategoryID, sort = "price_desc" })">Price: High to Low</a></li>
+                    </ul>
+                </div>
+            </div>
+            @if (Model.Products.Count == 0)
+            {
+                <div class="text-center py-5 text-muted">No products found in this category yet.</div>
+            }
+            else
+            {
+                <div class="row">
+                    @foreach (var product in Model.Products)
+                    {
+                        <div class="col-6 col-md-4">
+                            @Html.Partial("_ProductCard", product)
+                        </div>
+                    }
+                </div>
+            }
+            @if (Model.TotalPages > 1)
+    {
+                <nav class="mt-4">
+                    <ul class="pagination justify-content-center">
+@for (int i = 1; i <= Model.TotalPages; i++)
+    {
+    <li class="page-item @(i == Model.CurrentPage ? "active" : "")">
+        <a class="page-link" href="@Url.Action(Model.Gender, "Shop", new { categoryId = Model.SelectedCategoryID, sort = Model.SortBy, page = i })">@i</a>
+    </li>
+    }
+                    </ul>
+                </nav>
+                }
+        </div>
+    </div>
+</div>

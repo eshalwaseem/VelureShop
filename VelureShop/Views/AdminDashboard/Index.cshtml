@@ -1,0 +1,66 @@
+﻿@model VelureShop.Models.ViewModels.AdminDashboardViewModel
+@{
+    ViewBag.Title = "Dashboard";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="row mb-4">
+    <div class="col-md-3 mb-3">
+        <div class="admin-stat-card">
+            <div class="text-muted" style="font-size:13px;">TOTAL PRODUCTS</div>
+            <div class="stat-value">@Model.TotalProducts</div>
+        </div>
+    </div>
+    <div class="col-md-3 mb-3">
+        <div class="admin-stat-card">
+            <div class="text-muted" style="font-size:13px;">TOTAL ORDERS</div>
+            <div class="stat-value">@Model.TotalOrders</div>
+        </div>
+    </div>
+    <div class="col-md-3 mb-3">
+        <div class="admin-stat-card">
+            <div class="text-muted" style="font-size:13px;">PENDING ORDERS</div>
+            <div class="stat-value">@Model.PendingOrders</div>
+        </div>
+    </div>
+    <div class="col-md-3 mb-3">
+        <div class="admin-stat-card">
+            <div class="text-muted" style="font-size:13px;">TOTAL CUSTOMERS</div>
+            <div class="stat-value">@Model.TotalCustomers</div>
+        </div>
+    </div>
+</div>
+
+<div class="admin-stat-card mb-4">
+    <div class="text-muted" style="font-size:13px;">TOTAL REVENUE</div>
+    <div class="stat-value">PKR @Model.TotalRevenue.ToString("N0")</div>
+</div>
+<h5 class="fw-bold mb-3">Recent Orders</h5>
+<div class="table-responsive bg-white rounded p-3">
+    <table class="table align-middle mb-0">
+        <thead>
+            <tr class="text-muted" style="font-size:13px;">
+                <th>ORDER #</th>
+                <th>CUSTOMER</th>
+                <th>DATE</th>
+                <th>TOTAL</th>
+                <th>STATUS</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var order in Model.RecentOrders)
+            {
+                <tr>
+                    <td>#@order.OrderID</td>
+                    <td>@(order.User != null ? order.User.FullName : "")</td>
+                    <td>@order.CreatedAt.ToString("MMM dd, yyyy")</td>
+                    <td class="fw-bold">PKR @order.Total.ToString("N0")</td>
+                    <td><span class="status-pill status-@order.Status">@order.Status</span></td>
+                    <td><a href="@Url.Action("Details", "AdminOrder", new { id = order.OrderID })">View &rsaquo;</a></td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+

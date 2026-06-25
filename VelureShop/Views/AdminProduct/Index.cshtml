@@ -1,0 +1,52 @@
+﻿@model IEnumerable<VelureShop.Models.Product>
+@{
+    ViewBag.Title = "Products";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="d-flex justify-content-end mb-3">
+    <a href="@Url.Action("Create")" class="btn btn-dark">+ ADD PRODUCT</a>
+</div>
+<div class="table-responsive bg-white rounded p-3">
+    <table class="table align-middle mb-0">
+        <thead>
+            <tr class="text-muted" style="font-size:13px;">
+                <th>NAME</th>
+                <th>CATEGORY</th>
+                <th>PRICE</th>
+                <th>STOCK</th>
+                <th>STATUS</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var p in Model)
+            {
+                <tr>
+                    <td>@p.Name</td>
+                    <td>@(p.Category != null ? p.Category.Gender + " / " + p.Category.Name : "")</td>
+                    <td>PKR @p.Price.ToString("N0")</td>
+                    <td>@p.StockQty</td>
+                    <td>
+                        @if (p.IsActive)
+                        {
+                            <span class="status-pill status-Delivered">Active</span>
+                        }
+                        else
+                        {
+                            <span class="status-pill status-Cancelled">Inactive</span>
+                        }
+                    </td>
+                    <td>
+<a href="@Url.Action("Edit", new { id = p.ProductID })" class="me-3">Edit</a>
+@if (p.IsActive)
+                        {
+    <a href="@Url.Action("Delete", new { id = p.ProductID })" class="text-danger">Deactivate</a>
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
