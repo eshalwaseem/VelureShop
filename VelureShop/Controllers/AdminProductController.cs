@@ -6,6 +6,7 @@ using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using VelureShop.Models;
+using System.IO;
 
 namespace VelureShop.Controllers
 {
@@ -39,9 +40,17 @@ namespace VelureShop.Controllers
         // POST: /AdminProduct/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(Product product)
+        public ActionResult Create(Product product, HttpPostedFileBase ImageFile)
         {
             if (!IsAdmin()) return RedirectToAction("Login", "Account");
+
+            if (ImageFile != null && ImageFile.ContentLength > 0)
+            {
+                string fileName = Path.GetFileName(ImageFile.FileName);
+                string savePath = Server.MapPath("~/Images/products/" + fileName);
+                ImageFile.SaveAs(savePath);
+                product.ImagePath = fileName;
+            }
 
             if (ModelState.IsValid)
             {

@@ -1,0 +1,129 @@
+﻿
+@model VelureShop.Models.ViewModels.CheckoutViewModel
+@{
+    ViewBag.Title = "Checkout";
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Checkout - VELURE</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+</head>
+<body>
+    <div class="container py-4">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <a href="@Url.Action("Index", "Home")" class="brand-logo">VELURE</a>
+            <span class="text-muted"><i class="fas fa-lock"></i> Secure Checkout</span>
+        </div>
+        <div class="d-flex justify-content-center align-items-center mb-5" style="gap:8px;">
+            <span class="checkout-step-pill" style="background:#2c3e34;">&#10003;</span>
+            <span class="text-muted">Cart</span>
+            <span class="mx-3 text-muted">&mdash;&mdash;&mdash;</span>
+            <span class="checkout-step-pill">2</span>
+            <strong>Shipping &amp; Payment</strong>
+            <span class="mx-3 text-muted">&mdash;&mdash;&mdash;</span>
+            <span class="checkout-step-pill" style="background:#cfcfc9;color:#444;">3</span>
+            <span class="text-muted">Confirmation</span>
+        </div>
+
+        @if (ViewBag.Error != null)
+        {
+            <div class="alert alert-danger">@ViewBag.Error</div>
+        }
+
+        <form action="@Url.Action("PlaceOrder", "Checkout")" method="post">
+            @Html.AntiForgeryToken()
+            <div class="row">
+                <div class="col-md-7">
+                    <h5 class="mb-3"><span class="form-section-number">1</span> Contact Information</h5>
+                    <div class="row mb-4">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Email Address</label>
+                            <input type="email" name="Email" class="form-control" value="@Model.Email" placeholder="you@example.com" required />
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Phone Number</label>
+                            <input type="text" name="Phone" class="form-control" value="@Model.Phone" placeholder="+92 300 1234567" />
+                        </div>
+                    </div>
+                    <h5 class="mb-3"><span class="form-section-number">2</span> Shipping Address</h5>
+                    <div class="row mb-2">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">First Name</label>
+                            <input type="text" name="FirstName" class="form-control" value="@Model.FirstName" required />
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Last Name</label>
+                            <input type="text" name="LastName" class="form-control" value="@Model.LastName" />
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Street Address</label>
+                        <input type="text" name="Street" class="form-control" value="@Model.Street" placeholder="House 12, Street 4, DHA Phase 6" required />
+                    </div>
+                    <div class="row mb-2">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Area</label>
+                            <input type="text" name="Area" class="form-control" value="@Model.Area" placeholder="DHA Phase 5" />
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <label class="form-label">City</label>
+                            <input type="text" name="City" class="form-control" value="@Model.City" placeholder="Karachi" required />
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <label class="form-label">Province</label>
+                            <input type="text" name="Province" class="form-control" value="@Model.Province" placeholder="Sindh" required />
+                        </div>
+                    </div>
+                    <h5 class="mb-3 mt-4"><span class="form-section-number">3</span> Payment Method</h5>
+                    <div class="payment-option selected">
+                        <strong>Cash on Delivery</strong>
+                        <div class="text-muted" style="font-size:13px;">Pay when your order arrives</div>
+                    </div>
+                </div>
+                <div class="col-md-5">
+                    <div class="order-summary-box">
+                        <h5 class="fw-bold mb-4">Order Summary</h5>
+                        @foreach (var item in Model.Items)
+                        {
+                            <div class="d-flex justify-content-between align-items-start mb-3">
+                                <div>
+                                    <span class="checkout-step-pill" style="width:20px;height:20px;font-size:10px;">@item.Quantity</span>
+                                    <strong>@item.Product.Name</strong>
+                                    <div class="text-muted ms-4" style="font-size:13px;">@item.Product.Category.Name</div>
+                                </div>
+                                <<span class="fw-bold">PKR @item.LineTotal.ToString("N0")</span>
+                            </div>
+                        }
+                        <hr />
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>Subtotal</span>
+                            <span>PKR @Model.Subtotal.ToString("N0")</span>
+                        </div>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>Shipping</span>
+                            <span>@(Model.Shipping == 0 ? "Free" : "PKR " + Model.Shipping.ToString("N0"))</span>
+                        </div>
+                        <div class="d-flex justify-content-between mb-3">
+                            <span>Estimated Tax</span>
+                            <span>PKR @Model.Tax.ToString("N0")</span>
+                        </div>
+                        <hr />
+                        <div class="d-flex justify-content-between fw-bold fs-5 mb-4">
+                            <span>Total</span>
+                            <span>PKR @Model.Total.ToString("N0")</span>
+                        </div>
+                        <button type="submit" class="btn w-100" style="background:#2c3e34;color:#fff;padding:14px;font-weight:700;">PLACE ORDER</button>
+                        <div class="text-center text-muted mt-3" style="font-size:13px;">&#128274; Your payment is encrypted &amp; secure</div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</body>
+</html>

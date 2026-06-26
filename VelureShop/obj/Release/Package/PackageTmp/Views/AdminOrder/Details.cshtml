@@ -1,0 +1,82 @@
+﻿
+@using System.Linq
+@using VelureShop.Models
+@{
+    ViewBag.Title = "Order #" + Model.OrderID;
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    var items = (List<VelureShop.Models.OrderItem>)ViewBag.Items;
+    string[] statuses = { "Pending", "Processing", "Shipped", "Delivered", "Cancelled" };
+}
+
+<div class="row">
+    <div class="col-md-7">
+        <div class="bg-white rounded p-4 mb-4">
+            <h6 class="text-muted mb-3">ITEMS</h6>
+            <table class="table align-middle mb-0">
+                <thead>
+                    <tr class="text-muted" style="font-size:13px;">
+                        <th>PRODUCT</th>
+                        <th>QTY</th>
+                        <th>PRICE</th>
+                        <th>TOTAL</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in items)
+                    {
+                        <tr>
+                            <td>@(item.Product != null ? item.Product.Name : "")</td>
+                            <td>@item.Quantity</td>
+                            <td>PKR @item.UnitPrice.ToString("N0")</td>
+                            <td class="fw-bold">PKR @item.LineTotal.ToString("N0")</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+            <hr />
+            <div class="d-flex justify-content-between mb-1"><span>Subtotal</span><span>PKR @Model.Subtotal.ToString("N0")</span></div>
+            <div class="d-flex justify-content-between mb-1"><span>Shipping</span><span>PKR @Model.Shipping.ToString("N0")</span></div>
+            <div class="d-flex justify-content-between mb-1"><span>Tax</span><span>PKR @Model.Tax.ToString("N0")</span></div>
+            <div class="d-flex justify-content-between fw-bold fs-5 mt-2"><span>Total</span><span>PKR @Model.Total.ToString("N0")</span></div>
+        </div>
+    </div>
+    <div class="col-md-5">
+        <div class="bg-white rounded p-4 mb-4">
+            <h6 class="text-muted mb-3">CUSTOMER</h6>
+            <p class="mb-1"><strong>@(Model.User != null ? Model.User.FullName : "")</strong></p>
+            <p class="mb-1 text-muted">@(Model.User != null ? Model.User.Email : "")</p>
+            <p class="mb-0 text-muted">@(Model.User != null ? Model.User.Phone : "")</p>
+        </div>
+
+        <div class="bg-white rounded p-4 mb-4">
+            <h6 class="text-muted mb-3">SHIPPING ADDRESS</h6>
+            @if (Model.Address != null)
+{
+    <p class="mb-1">@Model.Address.FullName</p>
+    <p class="mb-1">@Model.Address.Street, @Model.Address.Area</p>
+    <p class="mb-0">@Model.Address.City, @Model.Address.Province</p>
+}
+            </div>
+            <div class="bg-white rounded p-4 mb-4">
+                <h6 class="text-muted mb-3">PAYMENT</h6>
+               @{ var payment = ViewBag.Payment as VelureShop.Models.Payment; }
+<p class="mb-1">Method: <strong>@(payment != null ? payment.Method : "Cash on Delivery")</strong></p>
+<p class="mb-0">Status: <span class="status-pill status-@(payment != null ? payment.Status : "Pending")">@(payment != null ? payment.Status : "Pending")</span></p>
+            </div>
+            <div class="bg-white rounded p-4">
+                <h6 class="text-muted mb-3">ORDER STATUS</h6>
+                <p class="mb-3">Current: <span class="status-pill status-@Model.Status">@Model.Status</span></p>
+                @using (Html.BeginForm("UpdateStatus", "AdminOrder", FormMethod.Post))
+                {
+                    <input type="hidden" name="orderId" value="@Model.OrderID" />
+                    <select name="status" class="form-control mb-3">
+                        @foreach (var s in statuses)
+                        {
+                            <option value="@s" selected="@(s == Model.Status)">@s</option>
+                        }
+                    </select>
+                    <button type="submit" class="btn btn-dark w-100">UPDATE STATUS</button>
+                }
+            </div>
+        </div>
+    </div>

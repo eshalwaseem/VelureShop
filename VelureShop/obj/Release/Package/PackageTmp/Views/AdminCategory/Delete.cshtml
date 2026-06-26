@@ -1,0 +1,21 @@
+﻿@model VelureShop.Models.Category
+@{
+    ViewBag.Title = "Delete Category";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="bg-white rounded p-4" style="max-width:520px;">
+    <p>Are you sure you want to delete <strong>@Model.Name</strong> (@Model.Gender)?</p>
+    @if (Model.Products.Count > 0)
+    {
+        <div class="alert alert-warning">This category has @Model.Products.Count product(s) assigned. Move or deactivate them first.</div>
+    }
+
+    @using (Html.BeginForm("Delete", "AdminCategory", FormMethod.Post))
+    {
+        @Html.AntiForgeryToken()
+        @Html.HiddenFor(m => m.CategoryID)
+        <button type="submit" class="btn btn-danger" @(Model.Products.Count > 0 ? "disabled" : "")>DELETE</button>
+        <a href="@Url.Action("Index")" class="btn btn-outline-secondary ms-2">Cancel</a>
+    }
+</div>

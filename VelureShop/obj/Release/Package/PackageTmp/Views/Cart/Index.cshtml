@@ -1,0 +1,98 @@
+﻿@model VelureShop.Models.ViewModels.CartViewModel
+
+@{
+    ViewBag.Title = "Shopping Cart";
+}
+
+<div class="container mt-4 mb-5">
+    <div class="text-muted mb-2" style="font-size:14px;">
+        <a href="@Url.Action("Index", "Home")">Home</a> / <strong>Shopping Cart</strong>
+    </div>
+    <h1 class="fw-bold mb-4">Your Cart <span class="text-muted fs-5">(@Model.Items.Sum(i => i.Quantity) items)</span></h1>
+    @if (Model.Items.Count == 0)
+    {
+        <div class="text-center py-5">
+            <p class="text-muted mb-4">Your cart is empty.</p>
+            <a href="@Url.Action("Women", "Shop")" class="btn btn-dark">CONTINUE SHOPPING</a>
+        </div>
+    }
+    else
+    {
+        <div class="row">
+            <div class="col-md-8">
+                <table class="table align-middle">
+                    <thead>
+                        <tr class="text-muted" style="font-size:13px;">
+                            <th>PRODUCT</th>
+                            <th>PRICE</th>
+                            <th>QUANTITY</th>
+                            <th>TOTAL</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.Items)
+                        {
+                            <tr>
+                                <td style="width:340px;">
+                                    <div class="d-flex gap-3 align-items-center">
+                                        <div class="cart-line-image"></div>
+                                        <div>
+                                            <div class="fw-semibold">@item.Product.Name</div>
+                                            <div class="text-muted" style="font-size:13px;">@item.Product.Category.Name</div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>PKR @item.Product.Price.ToString("N0")</td>
+                                <td>
+                                    <form action="@Url.Action("UpdateQuantity", "Cart")" method="post" class="d-inline">
+                                        @Html.AntiForgeryToken()
+                                        <input type="hidden" name="cartItemId" value="@item.CartItemID" />
+                                        <div class="qty-control">
+                                            <button type="submit" name="quantity" value="@(item.Quantity - 1)">&minus;</button>
+                                            <input type="text" value="@item.Quantity" readonly />
+                                            <button type="submit" name="quantity" value="@(item.Quantity + 1)">+</button>
+                                        </div>
+                                    </form>
+                                </td>
+                                <td class="fw-bold">PKR @item.LineTotal.ToString("N0")</td>
+                                <td>
+                                    <form action="@Url.Action("Remove", "Cart")" method="post">
+                                        @Html.AntiForgeryToken()
+                                        <input type="hidden" name="cartItemId" value="@item.CartItemID" />
+                                        <button type="submit" class="btn btn-sm btn-link text-danger" title="Remove">&times;</button>
+                                    </form>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+                <a href="@Url.Action("Women", "Shop")" class="text-muted">&larr; Continue Shopping</a>
+            </div>
+            <div class="col-md-4">
+                <div class="order-summary-box">
+                    <h5 class="fw-bold mb-4">Order Summary</h5>
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>Subtotal</span>
+                        <span>PKR @Model.Subtotal.ToString("N0")</span>
+                    </div>
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>Shipping</span>
+                        <span>@(Model.Shipping == 0 ? "Free" : "PKR" + Model.Shipping.ToString("N0"))</span>
+                    </div>
+                    <div class="d-flex justify-content-between mb-3">
+                        <span>Estimated Tax</span>
+                        <span>PKR @Model.Tax.ToString("N0")</span>
+                    </div>
+                    <hr />
+                    <div class="d-flex justify-content-between fw-bold fs-5 mb-4">
+                        <span>Total</span>
+                        <span>PKR @Model.Total.ToString("N0")</span>
+                    </div>
+                    <a href="@Url.Action("Index", "Checkout")" class="btn btn-dark w-100">PROCEED TO CHECKOUT</a>
+                    <div class="text-center text-muted mt-3" style="font-size:13px;"><i class="fas fa-lock"></i> Secure, encrypted checkout</div>
+                </div>
+            </div>
+        </div>
+    }
+</div>

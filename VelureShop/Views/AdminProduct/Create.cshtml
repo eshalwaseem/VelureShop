@@ -5,8 +5,8 @@
 }
 
 <div class="bg-white rounded p-4" style="max-width:640px;">
-    @using (Html.BeginForm("Create", "AdminProduct", FormMethod.Post))
-    {
+    @using (Html.BeginForm("Create", "AdminProduct", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
         @Html.AntiForgeryToken()
 
         <div class="mb-3">
@@ -32,10 +32,10 @@
             @Html.DropDownList("CategoryID", (SelectList)ViewBag.CategoryID, "-- Select Category --", new { @class = "form-control" })
         </div>
         <div class="mb-3">
-            <label class="form-label">Image filename</label>
-            @Html.TextBox("ImagePath", null, new { @class = "form-control", placeholder = "linen-wrap-dress.jpg" })
-            <div class="form-text">Upload the image file into /Images/products/ and enter its filename here.</div>
-        </div>
+    <label class="form-label">Product Image</label>
+    <input type="file" name="ImageFile" accept="image/*" class="form-control" />
+    <div class="form-text">Accepted: jpg, png, webp</div>
+</div>
         <div class="form-check mb-4">
             @Html.CheckBox("IsActive", true)
             <label class="form-check-label">Active (visible in store)</label>

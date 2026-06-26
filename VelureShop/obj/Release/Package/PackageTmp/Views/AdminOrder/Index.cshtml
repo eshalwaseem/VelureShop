@@ -1,0 +1,44 @@
+﻿@model List<VelureShop.Models.Order>
+@{
+    ViewBag.Title = "Orders";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    string[] statuses = { "Pending", "Processing", "Shipped", "Delivered", "Cancelled" };
+}
+
+<div class="d-flex gap-2 mb-3">
+    <a href="@Url.Action("Index")" class="btn btn-sm @(ViewBag.StatusFilter == null ? "btn-dark" : "btn-outline-secondary")">All</a>
+    @foreach (var s in statuses)
+    {
+        <a href="@Url.Action("Index", new { status = s })" class="btn btn-sm @(ViewBag.StatusFilter == s ? "btn-dark" : "btn-outline-secondary")">@s</a>
+    }
+</div>
+<div class="table-responsive bg-white rounded p-3">
+    <table class="table align-middle mb-0">
+        <thead>
+            <tr class="text-muted" style="font-size:13px;">
+                <th>ORDER #</th>
+                <th>CUSTOMER</th>
+                <th>CITY</th>
+                <th>DATE</th>
+                <th>TOTAL</th>
+                <th>STATUS</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var order in Model)
+            {
+                <tr>
+                    <td>#@order.OrderID</td>
+                    <td>@(order.User != null ? order.User.FullName : "")</td>
+                    <td>@(order.Address != null ? order.Address.City : "")</td>
+                    <td>@order.CreatedAt.ToString("MMM dd, yyyy")</td>
+                    <td class="fw-bold">PKR @order.Total.ToString("N0")</td>
+                    <td><span class="status-pill status-@order.Status">@order.Status</span></td>
+                    <td><a href="@Url.Action("Details", new { id = order.OrderID })">View &rsaquo;</a></td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
