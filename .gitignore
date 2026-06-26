@@ -1,0 +1,7 @@
+Web.config
+appsettings.json
+*.user
+bin/
+obj/
+.vs/
+packages/
